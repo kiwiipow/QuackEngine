@@ -1,12 +1,7 @@
-﻿// QuackEngine.cpp: define el punto de entrada de la aplicación.
-//
-
-#include "QuackEngine.h"
-
-using namespace std;
+﻿#include <fmt/core.h>
 
 int main()
 {
-	cout << "Hello CMake." << endl;
-	return 0;
+    fmt::print("Hello World!\n");
+    return 0;
 }
