@@ -2,6 +2,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <SDL3/SDL.h>
+#include <glad/glad.h>
+#include <SDL3/SDL_opengl.h>
+#include <imgui.h>
+//#include <backends/imgui_impl_sdl3.h>
+//#include <backends/imgui_impl_opengl3.h> ?????
 
 int main()
 {

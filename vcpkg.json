@@ -1,6 +1,19 @@
 {
+ 
   "dependencies": [
     "fmt",
-    "glm"
+    "glm",
+    "sdl3",
+    "glad",
+    "opengl",
+    {
+      "name": "imgui",
+      "features": [
+        "sdl3-binding",
+        "opengl3-binding",
+        "docking-experimental"
+      ]
+    }
   ]
+
 }
