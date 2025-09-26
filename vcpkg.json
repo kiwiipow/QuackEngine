@@ -6,6 +6,7 @@
     "sdl3",
     "glad",
     "opengl",
+    "imgui",
     {
       "name": "imgui",
       "features": [
