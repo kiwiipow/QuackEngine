@@ -12,9 +12,16 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
 
+//JSON parser
+#include <nlohmann/json.hpp>
+#include <fstream>
+
 //sdl3 for console
 #include <vector>
 #include <string>
+
+
+
 
 class AppConsole
 {
@@ -66,6 +73,30 @@ public:
 //
 //
 //};
+
+
+nlohmann::json LoadConfig(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open())
+    {
+        std::cerr << "[ERROR] Could not open config file: " << path << std::endl;
+        return nullptr;
+    }
+
+    nlohmann::json config;
+    try
+    {
+        file >> config;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "[ERROR] Failed to parse JSON: " << e.what() << std::endl;
+        return nullptr;
+    }
+
+    return config;
+}
 
 void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& showConsole)
 {
@@ -180,8 +211,18 @@ int main()
     bool showConsole = true;
 
     // Window Resolution
-    const int SCREEN_WIDTH = 1920;
-    const int SCREEN_HEIGHT = 1080;
+
+    nlohmann::json config = LoadConfig("config.json");
+
+    int SCREEN_WIDTH = 1920;
+    int SCREEN_HEIGHT = 1080;
+
+    //does not work
+    if (config.contains("window"))
+    {
+        SCREEN_WIDTH = config["window"].value("width",10);
+        SCREEN_HEIGHT = config["window"].value("height",10);
+    }
 
    // Init SDL
 
