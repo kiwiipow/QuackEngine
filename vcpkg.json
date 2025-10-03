@@ -1,20 +1,14 @@
 {
- 
   "dependencies": [
     "fmt",
     "glm",
+    "nlohmann-json",
     "sdl3",
-    "glad",
     "opengl",
-    "imgui",
+    "glad",
     {
       "name": "imgui",
-      "features": [
-        "sdl3-binding",
-        "opengl3-binding",
-        "docking-experimental"
-      ]
+      "features": [ "sdl3-binding", "opengl3-binding", "docking-experimental" ]
     }
   ]
-
 }

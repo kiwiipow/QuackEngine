@@ -18,6 +18,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
+
 # Add source to this project's executable.
 add_executable (QuackEngine QuackEngine.cpp)
 
