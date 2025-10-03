@@ -19,6 +19,12 @@ find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
 
+file(GLOB ENGINE_CODE
+#put directories of folders
+
+
+)
+
 # Add source to this project's executable.
 add_executable (QuackEngine QuackEngine.cpp)
 

@@ -20,15 +20,21 @@
 #include <vector>
 #include <string>
 
+//#include<EngineConsole.cpp>
+//#include<UI.h>
 
 
-
-class AppConsole
+class EngineConsole
 {
 private:
     std::vector<std::string> logs;
 
 public:
+
+    EngineConsole()
+    {
+
+    }
     void Log(const std::string& message)
     {
         logs.push_back(message);
@@ -52,28 +58,6 @@ public:
 
 
 };
-
-//class MenuBar
-//{
-//    private:
-//        bool showInspector;
-//        bool showOutliner;
-//        bool showAbout; 
-//        bool showConsole;
-//
-//    public:
-//        MenuBar()
-//        {
-//
-//        }
-//        void DrawWindows()
-//        {
-//
-//        }
-//
-//
-//};
-
 
 nlohmann::json LoadConfig(const std::string& path)
 {
@@ -197,17 +181,13 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
         ImGui::End();
     }
 
-    if (showConsole)
-    {
-
-    }
 
 }
 
 int main()
 {
     //init console
-    AppConsole ConsoleLog;
+    EngineConsole ConsoleLog;
     bool showConsole = true;
 
     // Window Resolution
