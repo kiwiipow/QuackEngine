@@ -20,44 +20,43 @@
 #include <vector>
 #include <string>
 
-//#include<EngineConsole.cpp>
-//#include<UI.h>
+#include "EngineConsole.h"
 
 
-class EngineConsole
-{
-private:
-    std::vector<std::string> logs;
-
-public:
-
-    EngineConsole()
-    {
-
-    }
-    void Log(const std::string& message)
-    {
-        logs.push_back(message);
-    }
-
-    void Draw(const char* title, bool* open = nullptr)
-    {
-        if (!ImGui::Begin(title, open))
-        {
-            ImGui::End();
-            return;
-        }
-
-        for (const auto& line : logs)
-        {
-            ImGui::TextUnformatted(line.c_str());
-        }
-
-        ImGui::End();
-    }
-
-
-};
+//class EngineConsole
+//{
+//private:
+//    std::vector<std::string> logs;
+//
+//public:
+//
+//    EngineConsole()
+//    {
+//
+//    }
+//    void Log(const std::string& message)
+//    {
+//        logs.push_back(message);
+//    }
+//
+//    void Draw(const char* title, bool* open = nullptr)
+//    {
+//        if (!ImGui::Begin(title, open))
+//        {
+//            ImGui::End();
+//            return;
+//        }
+//
+//        for (const auto& line : logs)
+//        {
+//            ImGui::TextUnformatted(line.c_str());
+//        }
+//
+//        ImGui::End();
+//    }
+//
+//
+//};
 
 nlohmann::json LoadConfig(const std::string& path)
 {
