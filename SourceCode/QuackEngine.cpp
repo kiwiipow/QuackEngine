@@ -16,47 +16,15 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-//sdl3 for console
-#include <vector>
-#include <string>
-
 #include "EngineConsole.h"
+#include "UI.h"
+#include "PopUpWindow.h"
 
 
-//class EngineConsole
-//{
-//private:
-//    std::vector<std::string> logs;
-//
-//public:
-//
-//    EngineConsole()
-//    {
-//
-//    }
-//    void Log(const std::string& message)
-//    {
-//        logs.push_back(message);
-//    }
-//
-//    void Draw(const char* title, bool* open = nullptr)
-//    {
-//        if (!ImGui::Begin(title, open))
-//        {
-//            ImGui::End();
-//            return;
-//        }
-//
-//        for (const auto& line : logs)
-//        {
-//            ImGui::TextUnformatted(line.c_str());
-//        }
-//
-//        ImGui::End();
-//    }
-//
-//
-//};
+int SCREEN_WIDTH = 1920;
+int SCREEN_HEIGHT = 1080;
+bool FULL_SCREEN;
+int brightnes = 1;
 
 nlohmann::json LoadConfig(const std::string& path)
 {
@@ -83,9 +51,11 @@ nlohmann::json LoadConfig(const std::string& path)
 
 void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& showConsole)
 {
+    PopUpWindow FileMenu;
     if (ImGui::BeginMainMenuBar())
     {
         // FILE MENU
+      
         if (ImGui::BeginMenu("File"))//Creates and starts menu or submenu 
         {
             if (ImGui::MenuItem("Exit"))
@@ -108,6 +78,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
         }
 
         // VIEW MENU
+        
         if (ImGui::BeginMenu("View"))
         {
 
@@ -119,6 +90,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
         }
 
         //HELP MENU
+        
         if (ImGui::BeginMenu("Help"))
         {
             ImGui::MenuItem("About", NULL, &showAbout);
@@ -141,7 +113,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
         ImGui::EndMainMenuBar();
     }
 
-
+   
     //POP UP WINDOWS
     if (showInspector)
     {
@@ -182,7 +154,45 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
 
 
 }
+void ConfigurationMenu(float& maxFps, std::vector<float>& FPS)
+{
+    if (ImGui::CollapsingHeader("Application"))
+    {
+        ImGui::Text("Quack Engine");
+        ImGui::Text("CITM");
+        ImGui::SliderFloat("Max FPS", &maxFps, 0.0f, 240.0f);
+    }
 
+    if (ImGui::CollapsingHeader("Window"))
+    {
+        
+        ImGui::SliderFloat("ScreenWidth",(float*)SCREEN_WIDTH,0, 10);
+        ImGui::SliderFloat("ScreenHeight",(float*)SCREEN_HEIGHT,0,10);
+        if (ImGui::SliderFloat("Brightnes", (float*) &brightnes,0,1))
+        {
+           // SDL_SetWindowBrightness(window, brightness);
+        }
+
+        if (ImGui::Checkbox("FullScreen", &FULL_SCREEN))
+        {
+            SCREEN_WIDTH = 1920;
+            SCREEN_WIDTH = 1080;
+ 
+        }
+    }
+
+    if (FPS.size() <= 60)
+    { 
+        FPS.push_back(ImGui::GetIO().Framerate);
+
+    }
+    else
+    {
+        ImGui::PlotHistogram("Fps\nhistogram",FPS.data(), static_cast<int>(FPS.size()),0, nullptr, 0.0f,  160.0f,  ImVec2(0, 80) );
+        FPS.empty();
+    }
+   
+}
 int main()
 {
     //init console
@@ -192,9 +202,6 @@ int main()
     // Window Resolution
 
     nlohmann::json config = LoadConfig("config.json");
-
-    int SCREEN_WIDTH = 1920;
-    int SCREEN_HEIGHT = 1080;
 
     //does not work
     if (config.contains("window"))
@@ -270,7 +277,8 @@ int main()
 
 
 
-
+    float maxFps;
+    std::vector<float> FPS;
     bool isRunning = true;
     bool showInspector, showOutliner, showAbout = true;//bool to enable disable windows from  ImGui::Begin
     while (isRunning)
@@ -327,6 +335,10 @@ int main()
         //Show test menu bar
         MenuBar(showInspector, showOutliner, showAbout, showConsole);
 
+        //show configuration
+       
+        ConfigurationMenu(maxFps,FPS);
+        
         //shows popup window the rest of calls for other windows are in menu bar function should make it a class ui or something
         if (showConsole)
         {

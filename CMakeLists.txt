@@ -24,7 +24,7 @@ file(GLOB_RECURSE SOURCES "SourceCode/*.cpp" "SourceCode/*.h")
 
 
 # Add source to this project's executable.
-add_executable (QuackEngine ${SOURCES})
+add_executable (QuackEngine ${SOURCES} "SourceCode/PopUpWindow.h" "SourceCode/PopUPWindow.cpp")
 
 target_link_libraries(QuackEngine PRIVATE
   glm::glm  
