@@ -12,42 +12,15 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
 
-//JSON parser
-#include <nlohmann/json.hpp>
-#include <fstream>
 
 #include "EngineConsole.h"
 #include "UI.h"
 #include "PopUpWindow.h"
 
+#include "3DMesh/Mesh.h"
+#include "3DMesh/Model.h"
 
-int SCREEN_WIDTH = 1920;
-int SCREEN_HEIGHT = 1080;
-bool FULL_SCREEN;
-int brightnes = 1;
 
-nlohmann::json LoadConfig(const std::string& path)
-{
-    std::ifstream file(path);
-    if (!file.is_open())
-    {
-        std::cerr << "[ERROR] Could not open config file: " << path << std::endl;
-        return nullptr;
-    }
-
-    nlohmann::json config;
-    try
-    {
-        file >> config;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "[ERROR] Failed to parse JSON: " << e.what() << std::endl;
-        return nullptr;
-    }
-
-    return config;
-}
 
 void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& showConsole)
 {
@@ -154,7 +127,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
 
 
 }
-void ConfigurationMenu(float& maxFps, std::vector<float>& FPS)
+void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, int &w, int &h, int &b, bool &fullScreen, SDL_Window *win)
 {
     if (ImGui::CollapsingHeader("Application"))
     {
@@ -166,18 +139,22 @@ void ConfigurationMenu(float& maxFps, std::vector<float>& FPS)
     if (ImGui::CollapsingHeader("Window"))
     {
         
-        ImGui::SliderFloat("ScreenWidth",(float*)SCREEN_WIDTH,0, 10);
-        ImGui::SliderFloat("ScreenHeight",(float*)SCREEN_HEIGHT,0,10);
-        if (ImGui::SliderFloat("Brightnes", (float*) &brightnes,0,1))
+        ImGui::SliderFloat("ScreenWidth",(float*)&w,100, 1920);
+        ImGui::SliderFloat("ScreenHeight",(float*)&h,100,1080);
+        if (ImGui::SliderFloat("Brightnes", (float*) &b,0,1))
         {
-           // SDL_SetWindowBrightness(window, brightness);
+            
         }
 
-        if (ImGui::Checkbox("FullScreen", &FULL_SCREEN))
+        if (ImGui::Checkbox("FullScreen", &fullScreen))
         {
-            SCREEN_WIDTH = 1920;
-            SCREEN_WIDTH = 1080;
- 
+            
+            SDL_SetWindowFullscreen(win, &fullScreen);
+            
+        }
+        else
+        {
+            
         }
     }
 
@@ -199,16 +176,10 @@ int main()
     EngineConsole ConsoleLog;
     bool showConsole = true;
 
-    // Window Resolution
-
-    nlohmann::json config = LoadConfig("config.json");
-
-    //does not work
-    if (config.contains("window"))
-    {
-        SCREEN_WIDTH = config["window"].value("width",10);
-        SCREEN_HEIGHT = config["window"].value("height",10);
-    }
+    int SCREEN_WIDTH = 720;
+    int SCREEN_HEIGHT = 720;
+    bool FULL_SCREEN = false;
+    int brightnes = 1;
 
    // Init SDL
 
@@ -230,11 +201,11 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Create OpenGL window using SDL
-    SDL_Window* window = SDL_CreateWindow("EnginishGL",
+    SDL_Window* window = SDL_CreateWindow("QuackEngine",
         SCREEN_WIDTH, SCREEN_HEIGHT,
         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
-
+    
     // Early out if window not valid
     if (window == nullptr)
     {
@@ -329,15 +300,12 @@ int main()
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        // Show sample demo from ImGui 
-        // ImGui::ShowDemoWindow();
-
         //Show test menu bar
         MenuBar(showInspector, showOutliner, showAbout, showConsole);
 
         //show configuration
        
-        ConfigurationMenu(maxFps,FPS);
+        ConfigurationMenu(maxFps,FPS, SCREEN_WIDTH, SCREEN_HEIGHT, brightnes, FULL_SCREEN, window);
         
         //shows popup window the rest of calls for other windows are in menu bar function should make it a class ui or something
         if (showConsole)
@@ -354,7 +322,7 @@ int main()
 
         // Swap window
         SDL_GL_SwapWindow(window);
-
+        
         // FRAME CONTROL
         // [...]
     }

@@ -5,6 +5,7 @@
         "sdl3",
         "opengl",
         "glad",
+        "assimp",
         {
             "name": "imgui",
             "features": [ "sdl3-binding", "opengl3-binding", "docking-experimental" ]
