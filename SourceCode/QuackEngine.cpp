@@ -38,15 +38,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
                 quit_event.type = SDL_EVENT_QUIT;
                 SDL_PushEvent(&quit_event);
             }
-            ImGui::MenuItem("Save"); // creates item as in action or window pop up
-            if (ImGui::BeginMenu("Save Copy"))
-            {
-                ImGui::MenuItem("Png.");
-                ImGui::MenuItem("Jpg.");
-
-                ImGui::EndMenu();
-            }
-
+           
             ImGui::EndMenu();//closes menu or submenu, must always be at the end of each BaginMenu
         }
 
@@ -127,7 +119,7 @@ void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& sho
 
 
 }
-void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, int &w, int &h, int &b, bool &fullScreen, SDL_Window *win)
+void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, float &w, float&h, float&b, bool &fullScreen, SDL_Window *win)
 {
     if (ImGui::CollapsingHeader("Application"))
     {
@@ -139,23 +131,35 @@ void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, int &w, int &h, i
     if (ImGui::CollapsingHeader("Window"))
     {
         
-        ImGui::SliderFloat("ScreenWidth",(float*)&w,100, 1920);
-        ImGui::SliderFloat("ScreenHeight",(float*)&h,100,1080);
-        if (ImGui::SliderFloat("Brightnes", (float*) &b,0,1))
+       bool WChange = ImGui::SliderFloat("ScreenWidth",&w,100, 1920);//min, max window w
+       bool HChange = ImGui::SliderFloat("ScreenHeight",&h,100,1080);//min, max window h
+        if (WChange || HChange)
+        {
+            SDL_SetWindowSize(win, w, h);
+        }
+        if (ImGui::SliderFloat("Brightness", &b, 0.0f, 1.0f))
         {
             
         }
 
         if (ImGui::Checkbox("FullScreen", &fullScreen))
         {
-            
-            SDL_SetWindowFullscreen(win, &fullScreen);
-            
+            if (fullScreen)
+            {
+                // Enable fullscreen (desktop fullscreen recommended)
+                SDL_SetWindowFullscreen(win, &fullScreen);
+            }
+            else
+            {
+                // Disable fullscreen
+                SDL_SetWindowFullscreen(win, 0);
+
+                // Optionally set minimum window size or normal size
+                SDL_SetWindowMinimumSize(win, 720, 720);
+                SDL_SetWindowSize(win, 1280, 720); // You can set desired size here
+            }
         }
-        else
-        {
-            
-        }
+        
     }
 
     if (FPS.size() <= 60)
@@ -176,10 +180,10 @@ int main()
     EngineConsole ConsoleLog;
     bool showConsole = true;
 
-    int SCREEN_WIDTH = 720;
-    int SCREEN_HEIGHT = 720;
+    float SCREEN_WIDTH = 720;
+    float SCREEN_HEIGHT = 720;
     bool FULL_SCREEN = false;
-    int brightnes = 1;
+    float brightnes = 1;
 
    // Init SDL
 

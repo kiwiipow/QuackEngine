@@ -16,10 +16,12 @@ find_package(OpenGL REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 # Add source to this project's executable.
 file(GLOB_RECURSE SOURCES "SourceCode/*.cpp" "SourceCode/*.h"
-						  "SourceCode/3DMesh/*.cpp" "SourceCode/3DMesh/*.h")
+						  "SourceCode/3DMesh/*.cpp" "SourceCode/3DMesh/*.h"
+						  "SourceCode/DataFiles/*.json")
 #add_executable (${PROJECT_NAME} QuackEngine.cpp)
 add_executable (QuackEngine ${SOURCES})
 
@@ -31,3 +33,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
