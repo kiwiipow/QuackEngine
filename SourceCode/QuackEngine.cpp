@@ -1,4 +1,4 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,11 +13,22 @@
 #include "imgui_impl_opengl3.h"
 
 
-void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
+#include "EngineConsole.h"
+#include "UI.h"
+#include "PopUpWindow.h"
+
+#include "3DMesh/Mesh.h"
+#include "3DMesh/Model.h"
+
+
+
+void MenuBar(bool& showInspector, bool& showOutliner, bool& showAbout, bool& showConsole)
 {
+    PopUpWindow FileMenu;
     if (ImGui::BeginMainMenuBar())
     {
         // FILE MENU
+      
         if (ImGui::BeginMenu("File"))//Creates and starts menu or submenu 
         {
             if (ImGui::MenuItem("Exit"))
@@ -28,24 +39,26 @@ void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
                 SDL_PushEvent(&quit_event);
             }
            
-            
             ImGui::EndMenu();//closes menu or submenu, must always be at the end of each BaginMenu
         }
 
         // VIEW MENU
+        
         if (ImGui::BeginMenu("View"))
         {
-           
+
             ImGui::MenuItem("Inspector", NULL, &showInspector);
             ImGui::MenuItem("Outliner", NULL, &showOutliner);
+            ImGui::MenuItem("Console", NULL, &showConsole);
 
             ImGui::EndMenu();
         }
 
         //HELP MENU
+        
         if (ImGui::BeginMenu("Help"))
         {
-            ImGui::MenuItem("About", NULL,&showAbout);
+            ImGui::MenuItem("About", NULL, &showAbout);
             if (ImGui::MenuItem("GitHub documentation"))
             {
                 SDL_OpenURL("https://github.com/UPC-GameEngines-BCN-2025/QuackEngine");
@@ -65,7 +78,7 @@ void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
         ImGui::EndMainMenuBar();
     }
 
-    
+   
     //POP UP WINDOWS
     if (showInspector)
     {
@@ -82,7 +95,7 @@ void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
     if (showAbout)
     {
         ImGui::Begin("About", &showAbout);
-        ImGui::Text("Quack Engine.\n 1.0.\n Members: \n kiwiipow: Paula Laguna \n Wakiren: Francisco Javier  \n Aria00015: Alba Fernández");
+        ImGui::Text("Quack Engine.\n 1.0.\n Members: \n kiwiipow: Paula Laguna \n Wakiren: Francisco Javier  \n Aria00015: Alba Fernï¿½ndez");
         ImGui::Text("Libraries: \nOpenGl, \nSDL3, \nGLAD, \nImGui.\n");
         ImGui::TextWrapped(R"(License: MIT License
             Copyright (c) 2025 CITM - UPC
@@ -104,18 +117,84 @@ void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
         ImGui::End();
     }
 
-}
 
+}
+void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, float &w, float&h, float&b, bool &fullScreen, SDL_Window *win)
+{
+    if (ImGui::CollapsingHeader("Application"))
+    {
+        ImGui::Text("Quack Engine");
+        ImGui::Text("CITM");
+        ImGui::SliderFloat("Max FPS", &maxFps, 0.0f, 240.0f);
+    }
+
+    if (ImGui::CollapsingHeader("Window"))
+    {
+        
+      /* bool WChange =*/ ImGui::SliderFloat("ScreenWidth",&w,100, 1920);//min, max window w
+      /* bool HChange = */ImGui::SliderFloat("ScreenHeight",&h,100,1080);//min, max window h
+       /* if (WChange || HChange)
+        {*/
+            SDL_SetWindowSize(win, w, h);
+        //}
+        if (ImGui::SliderFloat("Brightness", &b, 0.0f, 1.0f))
+        {
+            
+        }
+
+        if (ImGui::Checkbox("FullScreen", &fullScreen))
+        {
+            if (fullScreen)
+            {
+                // Enable fullscreen (desktop fullscreen recommended)
+                SDL_SetWindowFullscreen(win, &fullScreen);
+            }
+            else
+            {
+                // Disable fullscreen
+                SDL_SetWindowFullscreen(win, 0);
+
+                // Optionally set minimum window size or normal size
+                SDL_SetWindowMinimumSize(win, 720, 720);
+                SDL_SetWindowSize(win, 1280, 720); // You can set desired size here
+            }
+        }
+        
+    }
+
+    if (FPS.size() <= 60)
+    { 
+        FPS.push_back(ImGui::GetIO().Framerate);
+
+    }
+    else
+    {
+        ImGui::PlotHistogram("Fps\nhistogram",FPS.data(), static_cast<int>(FPS.size()),0, nullptr, 0.0f,  160.0f,  ImVec2(0, 80) );
+        FPS.empty();
+    }
+   
+}
 int main()
 {
-    // Window Resolution
-    const int SCREEN_WIDTH = 1920;
-    const int SCREEN_HEIGHT = 1080;
+    //init console
+    EngineConsole ConsoleLog;
+    bool showConsole = true;
 
-    // Init SDL
+    float SCREEN_WIDTH = 720;
+    float SCREEN_HEIGHT = 720;
+    bool FULL_SCREEN = false;
+    float brightnes = 1;
+
+   // Init SDL
+
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
+       ConsoleLog.Log("SDL not initialized");
         return -1;
+    }
+    else
+    {
+        ConsoleLog.Log("SDL Initialized");
     }
 
     // Setup Min/Major version for using OpenGL 4.6
@@ -126,16 +205,21 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Create OpenGL window using SDL
-    SDL_Window* window = SDL_CreateWindow("EnginishGL",
+    SDL_Window* window = SDL_CreateWindow("QuackEngine",
         SCREEN_WIDTH, SCREEN_HEIGHT,
         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
-
+    
     // Early out if window not valid
     if (window == nullptr)
     {
+        ConsoleLog.Log("OpenGl window not valid");
         SDL_Quit();
         return -1;
+    }
+    else
+    {
+        ConsoleLog.Log("OpenGl window valid");
     }
 
     // OpenGL is context based and thread local
@@ -166,6 +250,10 @@ int main()
     ImGui_ImplSDL3_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init();
 
+
+
+    float maxFps;
+    std::vector<float> FPS;
     bool isRunning = true;
     bool showInspector, showOutliner, showAbout = true;//bool to enable disable windows from  ImGui::Begin
     while (isRunning)
@@ -202,7 +290,7 @@ int main()
 
         // UPDATE
         // [...] 
-        
+
 
         // RENDER
         // Clear screen color
@@ -216,20 +304,29 @@ int main()
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        // Show sample demo from ImGui 
-        // ImGui::ShowDemoWindow();
-
         //Show test menu bar
-        MenuBar(showInspector,showOutliner,showAbout);
+        MenuBar(showInspector, showOutliner, showAbout, showConsole);
 
-     
+        //show configuration
+       
+        ConfigurationMenu(maxFps,FPS, SCREEN_WIDTH, SCREEN_HEIGHT, brightnes, FULL_SCREEN, window);
+        
+        //shows popup window the rest of calls for other windows are in menu bar function should make it a class ui or something
+        if (showConsole)
+        {
+             ConsoleLog.Draw("Console", &showConsole);
+        }
+           
+
         // Render ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+  
+
         // Swap window
         SDL_GL_SwapWindow(window);
-
+        
         // FRAME CONTROL
         // [...]
     }
