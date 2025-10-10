@@ -131,12 +131,12 @@ void ConfigurationMenu(float& maxFps, std::vector<float>& FPS, float &w, float&h
     if (ImGui::CollapsingHeader("Window"))
     {
         
-       bool WChange = ImGui::SliderFloat("ScreenWidth",&w,100, 1920);//min, max window w
-       bool HChange = ImGui::SliderFloat("ScreenHeight",&h,100,1080);//min, max window h
-        if (WChange || HChange)
-        {
+      /* bool WChange =*/ ImGui::SliderFloat("ScreenWidth",&w,100, 1920);//min, max window w
+      /* bool HChange = */ImGui::SliderFloat("ScreenHeight",&h,100,1080);//min, max window h
+       /* if (WChange || HChange)
+        {*/
             SDL_SetWindowSize(win, w, h);
-        }
+        //}
         if (ImGui::SliderFloat("Brightness", &b, 0.0f, 1.0f))
         {
             

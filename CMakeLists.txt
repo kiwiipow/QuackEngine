@@ -10,6 +10,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)       # optional: disable compiler-specific extens
 
 project (QuackEngine)
 
+#find_package(vcpkg CONFIG REQUIRED)
+
 find_package(glm CONFIG REQUIRED)
 find_package(SDL3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -19,19 +21,17 @@ find_package(assimp CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # Add source to this project's executable.
-file(GLOB_RECURSE SOURCES "SourceCode/*.cpp" "SourceCode/*.h"
-						  "SourceCode/3DMesh/*.cpp" "SourceCode/3DMesh/*.h"
-						  "SourceCode/DataFiles/*.json")
+file(GLOB_RECURSE SOURCES "SourceCode/*.cpp" "SourceCode/*.h" )
 #add_executable (${PROJECT_NAME} QuackEngine.cpp)
 add_executable (QuackEngine ${SOURCES})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+#target_link_libraries(${PROJECT_NAME} PRIVATE vcpkg::vcpkg)

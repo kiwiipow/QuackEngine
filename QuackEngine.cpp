@@ -27,14 +27,7 @@ void MenuBar(bool &showInspector, bool &showOutliner, bool &showAbout)
                 quit_event.type = SDL_EVENT_QUIT;
                 SDL_PushEvent(&quit_event);
             }
-            ImGui::MenuItem("Save"); // creates item as in action or window pop up
-            if (ImGui::BeginMenu("Save Copy"))
-            {
-                ImGui::MenuItem("Png.");
-                ImGui::MenuItem("Jpg.");
-
-                ImGui::EndMenu();
-            }
+           
             
             ImGui::EndMenu();//closes menu or submenu, must always be at the end of each BaginMenu
         }

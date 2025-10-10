@@ -1,12 +1,12 @@
 {
   "dependencies": [
     "fmt",
+    "assimp",
+    "nlohmann-json",
     "glm",
     "sdl3",
     "opengl",
     "glad",
-    "assimp",
-    "nlohmann_json",
     {
       "name": "imgui",
       "features": [ "sdl3-binding", "opengl3-binding", "docking-experimental" ]
